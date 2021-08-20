@@ -4,7 +4,7 @@ var randomNumber = function(min, max) {
 };
 
 var fightOrSkip = function() {
-  var promptFight = window.prompt("Would you like to FIGHT or SKIP this battle? Enter 'FIGHT' or 'SKIP' to choose.");
+  var promptFight = window.prompt("Would you like to FIGHT or SKIP this round? Enter 'FIGHT' or 'SKIP' to choose.");
   
   if (promptFight === "" || promptFight === null) {
     window.alert("You need to provide a valid answer! Please try again.");
@@ -13,18 +13,25 @@ var fightOrSkip = function() {
 
   promptFight = promptFight.toLowerCase();
 
+  if (promptFight != "skip" && promptFight != "fight") {
+    window.alert("You need to provide a valid answer! Please try again.");
+    return fightOrSkip();
+  }
+
   if (promptFight === "skip") {
     
-    var confirmSkip = window.confirm("Are you sure you'd like to quit?");
+    var confirmSkip = window.confirm("Are you sure you'd like to skip?");
     
     if (confirmSkip) {
-    window.alert(playerInfo.name + " has decided to skip this fight. Goodbye!");
-    playerInfo.money = Math.max(0, playerInfo.money - 10);
-    return true;
+
+      window.alert(playerInfo.name + " has decided to skip this round.");
+      playerInfo.money = Math.max(0, playerInfo.money - 10);
+      return true;
     }
   }
   return false;
 }
+
 var fight = function(enemy) {
 
   var isPlayerTurn = true;
@@ -54,7 +61,9 @@ var fight = function(enemy) {
       } else {
         window.alert(enemy.name + " still has " + enemy.health + " health left.");
       }
+
     } else {
+
       var damage = randomNumber(enemy.attack - 3, enemy.attack);
       playerInfo.health = Math.max(0, playerInfo.health - damage);
 
@@ -77,11 +86,14 @@ var startGame = function() {
   playerInfo.reset();
 
   for (var i = 0; i < enemyInfo.length; i++) {
+
+    console.log(playerInfo);
+
     if (playerInfo.health > 0) {
-      window.alert("Welcome to Robot Gladiators! Round " + (i+1));
+      window.alert("Welcome to Robot Gladiators! Round " + (i + 1));
       
       var pickedEnemyObj = enemyInfo[i];
-      pickedEnemyObj.health = randomNumber(40,60);
+      pickedEnemyObj.health = randomNumber(40, 60);
       console.log(pickedEnemyObj);
       
       fight(pickedEnemyObj);
@@ -89,7 +101,7 @@ var startGame = function() {
       if (playerInfo.health > 0 && i < enemyInfo.length - 1) {
         var storeConfirm = window.confirm("The fight is over, visit the store before the next round?");
         if (storeConfirm) {
-        shop();
+          shop();
         }
       }
     }
@@ -106,8 +118,13 @@ var endGame = function() {
   window.alert("The game has now ended. Let'see how you did!");
 
   var highScore = localStorage.getItem("highscore");
+  var highName = localStorage.getItem("name");
+
   if (highScore === null) {
     highScore = 0;
+  }
+  if (highName === null) {
+    highName = "";
   }
 
   if (playerInfo.money > highScore) {
@@ -117,7 +134,7 @@ var endGame = function() {
     alert(playerInfo.name + " now has the high score of " + playerInfo.money + "!");
   } 
   else {
-    alert(playerInfo.name + " did not beat the high score of " + highScore + ". Maybe next time!");
+    alert(playerInfo.name + " did not beat the high score of " + highName + " 's " + highScore + ". Maybe next time!");
   }
 
   var playAgainConfirm = window.confirm("Would you like to play again?");
@@ -178,7 +195,7 @@ var playerInfo = {
   money: 10,
   reset: function() {
     this.health = 100;
-    this.money = 10;
+    this.money = 1000;
     this.attack = 10;
   },
   refillHealth: function() {
@@ -207,15 +224,15 @@ var playerInfo = {
 var enemyInfo = [
   {
     name: "Roborto",
-    attack: randomNumber(10,14)
+    attack: randomNumber(10, 14)
   },
   {
     name: "Amy Android",
-    attack: randomNumber(10,14)
+    attack: randomNumber(10, 14)
   },
   {
     name: "Robo Trumble",
-    attack: randomNumber(10,14)
+    attack: randomNumber(10, 14)
   }
 ];
 
